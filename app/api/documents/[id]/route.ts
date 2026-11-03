@@ -1,0 +1,2 @@
+import { createServerClient } from "@/lib/supabase/server";
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) { const db = createServerClient(); const { data, error } = await db.from("documents").select("name,file_path").eq("id", (await params).id).single(); if (error) return Response.json({ error: "Document not found" }, { status: 404 }); const { data: url } = db.storage.from("pdfs").getPublicUrl(data.file_path); return Response.json({ name: data.name, url: url.publicUrl }); }
